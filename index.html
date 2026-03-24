@@ -203,6 +203,65 @@
         padding: 18px;
       }
 
+      .hero {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        padding: 22px;
+        margin-bottom: 18px;
+        background:
+          radial-gradient(circle at top left, rgba(34, 197, 94, 0.16), transparent 35%),
+          linear-gradient(135deg, #111111, #090909);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        box-shadow: var(--shadow);
+      }
+
+      .hero-copy h1 {
+        margin: 0 0 8px;
+        font-size: clamp(28px, 4vw, 42px);
+        line-height: 1.05;
+      }
+
+      .hero-copy p {
+        margin: 0;
+        max-width: 680px;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      .hero-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-shrink: 0;
+      }
+
+      .hero-btn {
+        padding: 14px 22px;
+        border-radius: 14px;
+        border: 1px solid rgba(34, 197, 94, 0.35);
+        background: linear-gradient(135deg, #32d972, #22c55e);
+        color: #031006;
+        font-size: 14px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        box-shadow: 0 16px 35px rgba(34, 197, 94, 0.22);
+      }
+
+      .hero-badge {
+        border: 1px solid var(--border);
+        background: rgba(255, 255, 255, 0.04);
+        color: #d7d7d7;
+        border-radius: 999px;
+        padding: 8px 12px;
+        font-size: 12px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
       .toolbar {
         display: grid;
         grid-template-columns: 1fr auto auto;
@@ -505,6 +564,19 @@
       }
 
       @media (max-width: 700px) {
+        .hero {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .hero-actions {
+          width: 100%;
+        }
+
+        .hero-btn {
+          width: 100%;
+        }
+
         .toolbar {
           grid-template-columns: 1fr;
         }
@@ -569,6 +641,17 @@
         </div>
 
         <main class="main">
+          <section class="hero">
+            <div class="hero-copy">
+              <div class="hero-badge">Featured workspace mood</div>
+              <h1>A sharper command center with a little more punch.</h1>
+              <p>Track deployments, previews, and project health from one place, now with a bright CTA in the hero so the top of the page feels intentional instead of purely utilitarian.</p>
+            </div>
+            <div class="hero-actions">
+              <button class="hero-btn">ALEGRIA</button>
+            </div>
+          </section>
+
           <div class="toolbar">
             <div class="toolbar-search">⌕&nbsp;&nbsp;Search Projects...</div>
             <div class="toolbar-icon">☷</div>
