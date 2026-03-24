@@ -1,1 +1,782 @@
-ey
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blockenfy Dashboard Clone</title>
+    <style>
+      :root {
+        --bg: #050505;
+        --panel: #0c0c0c;
+        --panel-2: #101010;
+        --panel-3: #141414;
+        --border: #242424;
+        --border-soft: #1a1a1a;
+        --text: #f4f4f4;
+        --muted: #9c9c9c;
+        --muted-2: #6f6f6f;
+        --green: #22c55e;
+        --red: #ef4444;
+        --yellow: #eab308;
+        --shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+        --radius: 16px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      .app {
+        display: grid;
+        grid-template-columns: 260px 1fr;
+        min-height: 100vh;
+      }
+
+      .sidebar {
+        background: #070707;
+        border-right: 1px solid var(--border);
+        padding: 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+
+      .workspace {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 12px;
+        border: 1px solid var(--border);
+        background: var(--panel);
+        border-radius: 12px;
+        font-weight: 600;
+      }
+
+      .workspace-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .status-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 999px;
+        background: radial-gradient(circle at 30% 30%, #4ade80, #15803d);
+        box-shadow: 0 0 16px rgba(34, 197, 94, 0.8);
+      }
+
+      .pill {
+        font-size: 11px;
+        color: #d4d4d4;
+        background: #131313;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        padding: 4px 8px;
+      }
+
+      .search {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 10px 12px;
+        color: var(--muted);
+      }
+
+      .kbd {
+        border: 1px solid #2a2a2a;
+        border-bottom-color: #3a3a3a;
+        background: #111;
+        border-radius: 8px;
+        padding: 2px 7px;
+        font-size: 12px;
+        color: #d0d0d0;
+      }
+
+      .nav {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .nav-section {
+        margin-top: 8px;
+        color: var(--muted-2);
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        padding: 0 8px;
+      }
+
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 12px;
+        border-radius: 12px;
+        color: #dadada;
+        border: 1px solid transparent;
+      }
+
+      .nav-item.active {
+        background: #111;
+        border-color: var(--border);
+      }
+
+      .nav-item:hover {
+        background: #0f0f0f;
+      }
+
+      .icon {
+        width: 16px;
+        text-align: center;
+        color: #b7b7b7;
+      }
+
+      .sidebar-bottom {
+        margin-top: auto;
+        background: linear-gradient(180deg, #101010, #0a0a0a);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 14px;
+      }
+
+      .sidebar-bottom .warning {
+        color: #ff8f8f;
+        font-size: 13px;
+        margin-bottom: 8px;
+      }
+
+      .btn {
+        background: #f4f4f4;
+        color: #060606;
+        border: none;
+        border-radius: 10px;
+        padding: 10px 14px;
+        font-weight: 700;
+      }
+
+      .btn.dark {
+        background: #121212;
+        color: #f3f3f3;
+        border: 1px solid var(--border);
+      }
+
+      .content {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+      }
+
+      .topbar {
+        height: 64px;
+        border-bottom: 1px solid var(--border-soft);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: sticky;
+        top: 0;
+        background: rgba(5, 5, 5, 0.92);
+        backdrop-filter: blur(14px);
+        z-index: 5;
+      }
+
+      .topbar .menu {
+        position: absolute;
+        right: 22px;
+        color: #9d9d9d;
+        font-size: 22px;
+      }
+
+      .main {
+        padding: 18px;
+      }
+
+      .toolbar {
+        display: grid;
+        grid-template-columns: 1fr auto auto;
+        gap: 12px;
+        margin-bottom: 18px;
+      }
+
+      .toolbar-search,
+      .toolbar-icon,
+      .toolbar-btn {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        min-height: 46px;
+        display: flex;
+        align-items: center;
+      }
+
+      .toolbar-search {
+        padding: 0 14px;
+        color: var(--muted);
+      }
+
+      .toolbar-icon {
+        justify-content: center;
+        width: 46px;
+        color: #bebebe;
+      }
+
+      .toolbar-btn {
+        padding: 0 14px;
+        gap: 10px;
+        font-weight: 700;
+      }
+
+      .dashboard {
+        display: grid;
+        grid-template-columns: 320px 1fr;
+        gap: 18px;
+      }
+
+      .panel-box {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+      }
+
+      .left-column {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+      }
+
+      .section {
+        padding: 16px;
+      }
+
+      .section-title {
+        font-weight: 700;
+        margin-bottom: 14px;
+      }
+
+      .usage-card {
+        background: #090909;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 14px;
+      }
+
+      .usage-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+      }
+
+      .mini-btn {
+        background: #f5f5f5;
+        color: #000;
+        border-radius: 8px;
+        padding: 5px 10px;
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .meter-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .meter-row {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 10px;
+        align-items: center;
+        font-size: 13px;
+        color: #d4d4d4;
+      }
+
+      .meter-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .meter-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 999px;
+        border: 2px solid #292929;
+        background: radial-gradient(circle, #8b5cf6 0 25%, transparent 30% 100%);
+      }
+
+      .track {
+        grid-column: 1 / -1;
+        height: 6px;
+        border-radius: 999px;
+        background: #151515;
+        overflow: hidden;
+      }
+
+      .fill {
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, #8b5cf6, #22c55e);
+      }
+
+      .alert-card,
+      .preview-card {
+        background: #090909;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 18px 14px;
+      }
+
+      .alert-card {
+        text-align: center;
+      }
+
+      .alert-card p,
+      .preview-sub,
+      .project-sub,
+      .project-meta {
+        color: var(--muted);
+      }
+
+      .preview-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .preview-item {
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 10px;
+        background: #0c0c0c;
+      }
+
+      .preview-tags {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-top: 8px;
+      }
+
+      .tag {
+        border: 1px solid var(--border);
+        background: #111;
+        border-radius: 999px;
+        padding: 4px 8px;
+        font-size: 11px;
+        color: #d7d7d7;
+      }
+
+      .tag.red { color: #ff8a8a; }
+      .tag.green { color: #86efac; }
+
+      .projects-wrap {
+        padding: 16px;
+      }
+
+      .projects-header {
+        font-weight: 700;
+        margin-bottom: 14px;
+      }
+
+      .project-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      .project-card {
+        min-height: 132px;
+        background: #090909;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      .project-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      .project-title-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .project-logo {
+        width: 28px;
+        height: 28px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        display: grid;
+        place-items: center;
+        color: #f4f4f4;
+        background: #0f0f0f;
+        font-size: 12px;
+        font-weight: 800;
+      }
+
+      .project-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #909090;
+      }
+
+      .circle-btn {
+        width: 28px;
+        height: 28px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        display: grid;
+        place-items: center;
+        background: #111;
+        font-size: 12px;
+      }
+
+      .project-name {
+        font-weight: 700;
+        margin-bottom: 2px;
+      }
+
+      .project-sub,
+      .project-meta {
+        font-size: 13px;
+      }
+
+      .status-line {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 8px;
+        font-size: 12px;
+        color: #c7c7c7;
+      }
+
+      .status-ok,
+      .status-warn,
+      .status-idle {
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+      }
+
+      .status-ok { background: var(--green); }
+      .status-warn { background: var(--yellow); }
+      .status-idle { background: #525252; }
+
+      @media (max-width: 1200px) {
+        .project-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 980px) {
+        .app {
+          grid-template-columns: 1fr;
+        }
+
+        .sidebar {
+          display: none;
+        }
+
+        .dashboard {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 700px) {
+        .toolbar {
+          grid-template-columns: 1fr;
+        }
+
+        .project-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar">
+        <div class="workspace">
+          <div class="workspace-left">
+            <div class="status-dot"></div>
+            <div>blockenfy-4510</div>
+          </div>
+          <div class="pill">Hobby</div>
+        </div>
+
+        <div class="search">
+          <span>⌕ Find...</span>
+          <span class="kbd">F</span>
+        </div>
+
+        <nav class="nav">
+          <div class="nav-item active"><span class="icon">◫</span> Projects</div>
+          <div class="nav-item"><span class="icon">⬢</span> Deployments</div>
+          <div class="nav-item"><span class="icon">☰</span> Logs</div>
+          <div class="nav-item"><span class="icon">〰</span> Analytics</div>
+          <div class="nav-item"><span class="icon">◌</span> Speed Insights</div>
+          <div class="nav-item"><span class="icon">◎</span> Observability</div>
+          <div class="nav-item"><span class="icon">⚑</span> Firewall</div>
+          <div class="nav-item"><span class="icon">◍</span> CDN</div>
+
+          <div class="nav-section">Workspace</div>
+          <div class="nav-item"><span class="icon">⌂</span> Domains</div>
+          <div class="nav-item"><span class="icon">⊕</span> Integrations</div>
+          <div class="nav-item"><span class="icon">▣</span> Storage</div>
+          <div class="nav-item"><span class="icon">⚐</span> Flags</div>
+          <div class="nav-item"><span class="icon">✦</span> Agent</div>
+          <div class="nav-item"><span class="icon">∞</span> AI Gateway</div>
+          <div class="nav-item"><span class="icon">▤</span> Sandboxes</div>
+          <div class="nav-item"><span class="icon">◔</span> Usage</div>
+          <div class="nav-item"><span class="icon">?</span> Support</div>
+        </nav>
+
+        <div class="sidebar-bottom">
+          <div class="warning">Action Required</div>
+          <div style="color: var(--muted); font-size: 13px; line-height: 1.5; margin-bottom: 12px;">
+            Take action to secure your projects from critical vulnerabilities.
+          </div>
+          <button class="btn" style="width:100%;">Update Projects</button>
+        </div>
+      </aside>
+
+      <section class="content">
+        <div class="topbar">
+          <div>Overview</div>
+          <div class="menu">⋯</div>
+        </div>
+
+        <main class="main">
+          <div class="toolbar">
+            <div class="toolbar-search">⌕&nbsp;&nbsp;Search Projects...</div>
+            <div class="toolbar-icon">☷</div>
+            <div class="toolbar-btn">Add New... <span style="margin-left:auto; color:#8a8a8a;">⌄</span></div>
+          </div>
+
+          <div class="dashboard">
+            <div class="left-column">
+              <div class="panel-box section">
+                <div class="section-title">Usage</div>
+                <div class="usage-card">
+                  <div class="usage-head">
+                    <div>Last 30 days</div>
+                    <div class="mini-btn">Upgrade</div>
+                  </div>
+                  <div class="meter-list">
+                    <div class="meter-row">
+                      <div class="meter-label"><span class="meter-dot"></span> Blob Data Storage</div>
+                      <div>45.41 MB / 1 GB</div>
+                      <div class="track"><div class="fill" style="width: 32%;"></div></div>
+                    </div>
+                    <div class="meter-row">
+                      <div class="meter-label"><span class="meter-dot"></span> Edge Requests</div>
+                      <div>10K / 1M</div>
+                      <div class="track"><div class="fill" style="width: 10%;"></div></div>
+                    </div>
+                    <div class="meter-row">
+                      <div class="meter-label"><span class="meter-dot"></span> ISR Reads</div>
+                      <div>3.8K / 1M</div>
+                      <div class="track"><div class="fill" style="width: 7%;"></div></div>
+                    </div>
+                    <div class="meter-row">
+                      <div class="meter-label"><span class="meter-dot"></span> Fast Origin Transfer</div>
+                      <div>26.99 MB / 10 GB</div>
+                      <div class="track"><div class="fill" style="width: 18%;"></div></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="panel-box section">
+                <div class="section-title">Alerts</div>
+                <div class="alert-card">
+                  <div style="font-weight:700; margin-bottom:8px;">Get alerted for anomalies</div>
+                  <p style="margin:0 0 14px;">Automatically monitor your projects for anomalies and get notified.</p>
+                  <button class="btn dark">Upgrade to Observability Plus</button>
+                </div>
+              </div>
+
+              <div class="panel-box section">
+                <div class="section-title">Recent Previews</div>
+                <div class="preview-list">
+                  <div class="preview-item">
+                    <div>Dev chore: track contracts/kyc_credentials</div>
+                    <div class="preview-tags">
+                      <span class="tag">Preview</span>
+                      <span class="tag">#1</span>
+                      <span class="tag red">Error</span>
+                    </div>
+                  </div>
+                  <div class="preview-item">
+                    <div>Fix React Server Components CVE vulnerability</div>
+                    <div class="preview-tags">
+                      <span class="tag">Preview</span>
+                      <span class="tag">#2</span>
+                      <span class="tag green">j0ggd7D4...</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel-box projects-wrap">
+              <div class="projects-header">Projects</div>
+              <div class="project-grid">
+                <article class="project-card">
+                  <div class="project-top">
+                    <div class="project-title-row">
+                      <div class="project-logo">N</div>
+                      <div>
+                        <div class="project-name">v0-mvp-visual-bloki</div>
+                        <div class="project-sub">No Production Deployment</div>
+                      </div>
+                    </div>
+                    <div class="project-actions"><div class="circle-btn">✓</div><div>⋯</div></div>
+                  </div>
+                  <div class="project-meta">2h ago</div>
+                </article>
+
+                <article class="project-card">
+                  <div class="project-top">
+                    <div class="project-title-row">
+                      <div class="project-logo">N</div>
+                      <div>
+                        <div class="project-name">keyd-app</div>
+                        <div class="project-sub">keyd-app.vercel.app</div>
+                        <div class="status-line"><span class="status-ok"></span> joacolinares/Keyd-App</div>
+                      </div>
+                    </div>
+                    <div class="project-actions"><div class="circle-btn">✓</div><div>⋯</div></div>
+                  </div>
+                  <div class="project-meta">Merge pull request #1 from joacolinares/dev · Mar 9 on main</div>
+                </article>
+
+                <article class="project-card">
+                  <div class="project-top">
+                    <div class="project-title-row">
+                      <div class="project-logo">v0</div>
+                      <div>
+                        <div class="project-name">v0-nft-perfume-marketplace</div>
+                        <div class="project-sub">v0-nft-perfume-marketplace.vercel.app</div>
+                        <div class="status-line"><span class="status-idle"></span> joacolinares/marketplace...</div>
+                      </div>
+                    </div>
+                    <div class="project-actions"><div class="circle-btn">∿</div><div>⋯</div></div>
+                  </div>
+                  <div class="project-meta">Update layout.tsx · Mar 5 on main</div>
+                </article>
+
+                <article class="project-card">
+                  <div class="project-top">
+                    <div class="project-title-row">
+                      <div class="project-logo">A</div>
+                      <div>
+                        <div class="project-name">v0-spark-agency-landing-portfolio</div>
+                        <div class="project-sub">v0-spark-agency-landing-portfolio-jade-el...</div>
+                      </div>
+                    </div>
+                    <div class="project-actions"><div class="circle-btn">∿</div><div>⋯</div></div>
+                  </div>
+                  <div class="project-meta">Jan 26</div>
+                </article>
+
+                <article class="project-card">
+                  <div class="project-top">
+                    <div class="project-title-row">
+                      <div class="project-logo">△</div>
+                      <div>
+                        <div class="project-name">v0-isometric-data-platform-landing-n2</div>
+                        <div class="project-sub">No Production Deployment</div>
+                      </div>
+                    </div>
+                    <div class="project-actions"><div class="circle-btn">✓</div><div>⋯</div></div>
+                  </div>
+                  <div class="project-meta">Feb 5</div>
+                </article>
+
+                <article class="project-card">
+                  <div class="project-top">
+                    <div class="project-title-row">
+                      <div class="project-logo">△</div>
+                      <div>
+                        <div class="project-name">v0-isometric-data-platform-landing-wq</div>
+                        <div class="project-sub">No Production Deployment</div>
+                      </div>
+                    </div>
+                    <div class="project-actions"><div class="circle-btn">✓</div><div>⋯</div></div>
+                  </div>
+                  <div class="project-meta">Feb 5</div>
+                </article>
+
+                <article class="project-card">
+                  <div class="project-top">
+                    <div class="project-title-row">
+                      <div class="project-logo">△</div>
+                      <div>
+                        <div class="project-name">v0-isometric-data-platform-landing-wd</div>
+                        <div class="project-sub">No Production Deployment</div>
+                      </div>
+                    </div>
+                    <div class="project-actions"><div class="circle-btn">✓</div><div>⋯</div></div>
+                  </div>
+                  <div class="project-meta">Feb 5</div>
+                </article>
+
+                <article class="project-card">
+                  <div class="project-top">
+                    <div class="project-title-row">
+                      <div class="project-logo">△</div>
+                      <div>
+                        <div class="project-name">v0-isometric-data-platform-landing-ei</div>
+                        <div class="project-sub">No Production Deployment</div>
+                      </div>
+                    </div>
+                    <div class="project-actions"><div class="circle-btn">✓</div><div>⋯</div></div>
+                  </div>
+                  <div class="project-meta">Feb 5</div>
+                </article>
+
+                <article class="project-card">
+                  <div class="project-top">
+                    <div class="project-title-row">
+                      <div class="project-logo">✦</div>
+                      <div>
+                        <div class="project-name">ey-dashboard-clone</div>
+                        <div class="project-sub">Dark admin interface inspired by your screenshot</div>
+                        <div class="status-line"><span class="status-warn"></span> Lucho estuvo aqui</div>
+                      </div>
+                    </div>
+                    <div class="project-actions"><div class="circle-btn">★</div><div>⋯</div></div>
+                  </div>
+                  <div class="project-meta">Just now</div>
+                </article>
+              </div>
+            </div>
+          </div>
+        </main>
+      </section>
+    </div>
+  </body>
+</html>
